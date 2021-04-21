@@ -1,0 +1,52 @@
+﻿#encoding=utf-8
+''' 2021-04-21: NE hardware inventory collector initial release.
+	
+'''
+# ----------------------------------------------------------VARIABLES----------------------------------------------------------#
+bscserverip = '172.16.121.41'
+dbuser = 'sitedb'
+dbpassword = 'BSCAltice.123'
+
+# ----------------------------------------------------------FUNCTIONS----------------------------------------------------------#
+def currentDateTime()
+	return StrfTime("%Y%m%d:%H%M%S:")
+end
+
+
+# ----------------------------------------------------------MAIN CODE----------------------------------------------------------#
+# Get NE list by type
+NEList = GetNELstByType('BTS3900') + GetNELstByType('BTS5900') + GetNELstByType('BTS3900 LTE')
+NEList.sort()
+# Open the connection
+ssh = OpenSSH(bscserverip, dbuser, dbpassword)
+if IsConnected(ssh) == True
+    Print(currentDateTime() + 'ssh connection success\n')
+    # Connect to the DB
+    ExecuteCmd(ssh, 'mysql -u ' + dbuser + ' -p' + dbpassword + ' alticedr_sitedb')
+    # Loop through the NE list
+    for ne in NEList
+		# Check if NE is online before connecting
+        if GetNEStatus(ne) == 1
+            Print(currentDateTime() + ne + ' is online')
+            # Connect to the NE on loop
+            ConnectNE(ne)
+            Print(currentDateTime() + 'Connected to ' + ne)
+			cabinetNumList = []
+			subrackNumList = []
+			slotNumList = []
+			# Let's start by getting the whole board list on the BBU
+			@DSP BRD:;
+			# Must get all command output reports, in case there is more than 1 report.
+            boardReportList = GetAllMMLReport()
+            # Loop through all the reports (even if it's just one)
+            for boardReport in boardReportList
+                boardReportParsed = ParseMMLRpt(boardReport)
+				#
+			# for boardReport in boardReportList
+			end
+			@DSP ELABEL:DEVTYPE=CABINET,CN=0;
+			ClearMMLBuffer()
+	# for ne in NEList	
+	end
+# if IsConnected(ssh) == True
+end
