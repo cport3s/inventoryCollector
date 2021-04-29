@@ -24,12 +24,72 @@ for fileName in dirList:
         btsFileList.append(fileName)
     if 'PICO' in fileName:
         picoFileList.append(fileName)
-#fileContent = uploaderFunctions.downloadFtpFileByte(ftpLogin, testFilePath, btsFileList[0])
+# BTS File Inventory
+# Get file content
 fileContent = uploaderFunctions.downloadFtpFileString(ftpLogin, testFilePath, btsFileList[0])
-fileValue = fileContent.getvalue()
-print(fileValue)
-#with open(fileValue, 'rb') as input_file:
-#    csv_reader = csv.reader(input_file)
-#    for row in csv_reader:
-#        if 'Board' in row:
-#            print('Found!')
+# Move to index 0, to start reading at the beginning.
+fileContent.seek(0)
+# Convert file content to dataframe
+dataframe = pd.read_csv(fileContent)
+hwType = []
+partNumbers = []
+serialNumberList = []
+descList = []
+# Parse df columns as lists (all CSV data is stored as columns)
+data = list(dataframe.columns)
+# Find all keyword's position inside the array
+keywordsDict = {}
+for c in range(len(data)):
+    if '[Cabinet]' in data[c]:
+        keywordsDict['[Cabinet]'] = c
+    if '[Subrack]' in data[c]:
+        keywordsDict['[Subrack]'] = c
+    if '[Slot]' in data[c]:
+        keywordsDict['[Slot]'] = c
+    if '[Board]' in data[c]:
+        keywordsDict['[Board]'] = c
+    if '[Port]' in data[c]:
+        keywordsDict['[Port]'] = c
+    if '[Antenna]' in data[c]:
+        keywordsDict['[Antenna]'] = c
+print(keywordsDict)
+# Move index to desired position (depending on document section)
+k = keywordsDict['[Cabinet]'] + 18
+j = k + 5
+i = k + 10
+# Cabinet Section
+while i < keywordsDict['[Subrack]']:
+    hwType.append(data[k])
+    k += 16
+    serialNumberList.append(data[j])
+    j += 16
+    descList.append(data[i])
+    i += 16
+# Subrack Section
+# Move index to desired position (depending on document section)
+k = keywordsDict['[Subrack]'] + 22
+j = k + 7
+i = k + 12
+while i < keywordsDict['[Slot]']:
+    hwType.append(data[k])
+    k += 19
+    serialNumberList.append(data[j])
+    j += 19
+    descList.append(data[i])
+    i += 19
+# Board Section
+# Move index to desired position (depending on document section)
+k = keywordsDict['[Board]'] + 39
+j = k + 5
+i = k + 10
+while i < keywordsDict['[Port]']:
+    hwType.append(data[k])
+    k += 31
+    serialNumberList.append(data[j])
+    j += 31
+    descList.append(data[i])
+    i += 31
+
+print(hwType)
+print(serialNumberList)
+print(descList)

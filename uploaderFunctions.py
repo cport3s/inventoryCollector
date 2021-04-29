@@ -36,8 +36,8 @@ def downloadFtpFileString(ftpLogin, filePath, fileName):
     ftp.cwd(filePath)
     # Instantiate a StringIO object to temp store the file from the FTP server
     s = StringIO()
-    # Return file as binary with retrlines functon. Must send according RETR command as part of FTP protocol
-    ftp.retrlines('LIST ' + fileName, s.write)
+    # Return file as string with retrlines functon. Must send according RETR command as part of FTP protocol
+    ftp.retrlines('RETR ' + fileName, s.write)
     # Open as Dataframe
     ftp.quit()
     return s
