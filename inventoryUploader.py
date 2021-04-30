@@ -1,6 +1,7 @@
 import csv
 import pandas as pd
 from io import StringIO, BytesIO
+import mysql.connector
 # Custom libraries
 import uploaderFunctions
 import classes
@@ -11,6 +12,8 @@ rncFileList = []
 btsFileList = []
 picoFileList = []
 
+# DB Connection Parameters
+dbPara = classes.dbCredentials()
 ftpLogin = classes.ranFtpCredentials()
 dirList = uploaderFunctions.getFtpPathFileList(ftpLogin, testFilePath)
 # Loop through the filename list
@@ -52,7 +55,9 @@ for c in range(len(data)):
         keywordsDict['[Port]'] = c
     if '[Antenna]' in data[c]:
         keywordsDict['[Antenna]'] = c
-print(keywordsDict)
+    if '[HostVer]' in data[c]:
+        keywordsDict['[HostVer]'] = c
+
 # Move index to desired position (depending on document section)
 k = keywordsDict['[Cabinet]'] + 18
 j = k + 5
@@ -90,6 +95,15 @@ while i < keywordsDict['[Port]']:
     descList.append(data[i])
     i += 31
 
-print(hwType)
-print(serialNumberList)
-print(descList)
+# Connect to DB
+connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.dataTable)
+# Connection must be buffered when executing multiple querys on DB before closing connection.
+pointer = connectr.cursor(buffered=True)
+#for i in hwType:
+#    query = 'INSERT INTO `networkinventory` (`nename`,`hardwaretype`,`serialnumber`,`description`,`lastupdate`) VALUES (\'{}\',\'{}\',\'{}\',\'{}\',\'{}\');'.format()
+# Close DB Connection
+pointer.close()
+connectr.close()
+print(len(hwType))
+print(len(serialNumberList))
+print(len(descList))
