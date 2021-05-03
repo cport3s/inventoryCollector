@@ -1,3 +1,18 @@
 {
-    "python.pythonPath": "venv\\Scripts\\python.exe"
+    "python.pythonPath": "venv\\Scripts\\python.exe",
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "172.16.121.41",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "bscserver",
+            "database": "alticedr_sitedb",
+            "username": "sitedb",
+            "password": "BSCAltice.123"
+        }
+    ]
 }
