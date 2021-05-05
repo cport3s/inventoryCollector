@@ -73,10 +73,13 @@ for fileName in btsFileList:
     i = k + 10
     # Cabinet Section
     while i < keywordsDict['[Subrack]']:
+        # Rack Type Column
         hwType.append(data[k])
         k += 16
+        # Serial Number Column
         serialNumberList.append(data[j])
         j += 16
+        # Manufacturer Data Column
         descList.append(data[i])
         i += 16
     # Subrack Section
@@ -85,22 +88,30 @@ for fileName in btsFileList:
     j = k + 7
     i = k + 12
     while i < keywordsDict['[Slot]']:
-        hwType.append(data[k])
-        k += 19
-        serialNumberList.append(data[j])
-        j += 19
-        descList.append(data[i])
-        i += 19
+        # Check if serial number value is valid
+        if len(data[j]) > 5:
+            # Frame Type Column
+            hwType.append(data[k])
+            k += 19
+            # Serial Number Column
+            serialNumberList.append(data[j])
+            j += 19
+            # Manufacturer Data Column
+            descList.append(data[i])
+            i += 19
     # Board Section
     # Move index to desired position (depending on document section)
     k = keywordsDict['[Board]'] + 39
     j = k + 5
     i = k + 10
     while i < keywordsDict['[Port]']:
+        # Board Type Column
         hwType.append(data[k])
         k += 31
+        # Serial Number Column
         serialNumberList.append(data[j])
         j += 31
+        # Manufacturer Data Column
         descList.append(data[i])
         i += 31
 
