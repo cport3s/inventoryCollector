@@ -36,29 +36,15 @@ currentDate = (datetime.now()).strftime("%Y-%m-%d")
 # Get yesterday's date
 yesterdayDate = (datetime.now()-timedelta(days=1)).strftime("%Y-%m-%d")
 # Query today's data
-query = 'select nename,hardwaretype,serialnumber,description from alticedr_sitedb.networkinventory where lastupdate > \'{}\' limit 10;'.format(currentDate)
+query = 'select nename,hardwaretype,serialnumber,description from alticedr_sitedb.networkinventory a where a.lastupdate >= \'{today}\' and not exists (select 1 from alticedr_sitedb.networkinventory b where b.lastupdate >= \'{yesterday}\' and b.lastupdate <  \'{today}\' and b.nename = a.nename and ifnull(b.serialnumber, \'x\') = ifnull(a.serialnumber, \'x\'))'.format(today=currentDate, yesterday=yesterdayDate)
 pointer.execute(query)
 queryRaw = pointer.fetchall()
 queryPayload = np.array(queryRaw)
 currentDataframe = pd.DataFrame(queryPayload, columns=['nename','hardwaretype','serialnumber','description'])
-# Query yesterday's data
-query = 'select nename,hardwaretype,serialnumber,description from alticedr_sitedb.networkinventory where lastupdate between \'{}\' and \'{}\' limit 11'.format(yesterdayDate, currentDate)
-pointer.execute(query)
-queryRaw = pointer.fetchall()
-queryPayload = np.array(queryRaw)
-yesterdayDataframe = pd.DataFrame(queryPayload, columns=['nename','hardwaretype','serialnumber','description'])
-# Now compare both dataframes
-if currentDataframe.equals(yesterdayDataframe):
-    print('Equals!')
-    print(currentDataframe.compare(yesterdayDataframe))
-    #print(yesterdayDataframe)
-else:
-    print('Not equals!')
-    print(currentDataframe.compare(yesterdayDataframe))
 # Close DB Connection
 pointer.close()
 connectr.close()
-
+print(currentDataframe)
 cred = mailCredentials.credentials()
 mail_from = 'caportes@altice.com.do'
 mail_to = 'caportes@altice.com.do'
