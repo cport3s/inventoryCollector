@@ -31,21 +31,30 @@ dbPara = classes.dbCredentials()
 connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.dataTable)
 # Connection must be buffered when executing multiple querys on DB before closing connection.
 pointer = connectr.cursor(buffered=True)
+# Get current date
 currentDate = (datetime.now()).strftime("%Y-%m-%d")
-yesterdayDate = (datetime.now()-timedelta(days=5)).strftime("%Y-%m-%d")
-query = 'select nename,hardwaretype,serialnumber,description from alticedr_sitedb.networkinventory where lastupdate > \'{}\';'.format(currentDate)
+# Get yesterday's date
+yesterdayDate = (datetime.now()-timedelta(days=1)).strftime("%Y-%m-%d")
+# Query today's data
+query = 'select nename,hardwaretype,serialnumber,description from alticedr_sitedb.networkinventory where lastupdate > \'{}\' limit 10;'.format(currentDate)
 pointer.execute(query)
 queryRaw = pointer.fetchall()
 queryPayload = np.array(queryRaw)
 currentDataframe = pd.DataFrame(queryPayload, columns=['nename','hardwaretype','serialnumber','description'])
-query = 'select nename,hardwaretype,serialnumber,description from alticedr_sitedb.networkinventory where lastupdate between \'{}\' and \'{}\''.format(yesterdayDate, currentDate)
+# Query yesterday's data
+query = 'select nename,hardwaretype,serialnumber,description from alticedr_sitedb.networkinventory where lastupdate between \'{}\' and \'{}\' limit 11'.format(yesterdayDate, currentDate)
 pointer.execute(query)
 queryRaw = pointer.fetchall()
 queryPayload = np.array(queryRaw)
 yesterdayDataframe = pd.DataFrame(queryPayload, columns=['nename','hardwaretype','serialnumber','description'])
-print(currentDataframe.reset_index(drop=True).compare(yesterdayDataframe.reset_index(drop=True)))
-#print(currentDataframe)
-#print(yesterdayDataframe)
+# Now compare both dataframes
+if currentDataframe.equals(yesterdayDataframe):
+    print('Equals!')
+    print(currentDataframe.compare(yesterdayDataframe))
+    #print(yesterdayDataframe)
+else:
+    print('Not equals!')
+    print(currentDataframe.compare(yesterdayDataframe))
 # Close DB Connection
 pointer.close()
 connectr.close()
