@@ -49,7 +49,7 @@ connectr.close()
 #print(currentDataframe)
 cred = mailCredentials.credentials()
 mail_from = 'caportes@altice.com.do'
-mail_to = 'caportes@altice.com.do'
+mail_to = 'ran-operaciones@altice.com.do'
 mail_subject = '[RANventory Manager] Daily Hardware Report'
 mail_body = '<p>Good morning,</p><p>Here is a list of newly added or replaced hardware on the RAN for yesterday:</p>' + currentDataframe.to_html(index=False) + '<p>Regards, </p>'
 
