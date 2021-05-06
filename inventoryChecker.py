@@ -18,7 +18,7 @@ def sendMailNotification(cred, mail_from, mail_to, mail_subject, mail_body):
     mimeMsg['From'] = mail_from
     mimeMsg['To'] = mail_to
     mimeMsg['Subject'] = mail_subject
-    mimeMsg.attach(MIMEText(mail_body, 'plain'))
+    mimeMsg.attach(MIMEText(mail_body, 'html'))
     connection = smtplib.SMTP(host='smtp.office365.com', port=587)
     connection.starttls()
     connection.login(cred.username, cred.password)
@@ -33,8 +33,10 @@ connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.d
 pointer = connectr.cursor(buffered=True)
 # Get current date
 currentDate = (datetime.now()).strftime("%Y-%m-%d")
+#currentDate = datetime(2021, 5, 5).strftime("%Y-%m-%d")
 # Get yesterday's date
 yesterdayDate = (datetime.now()-timedelta(days=1)).strftime("%Y-%m-%d")
+#yesterdayDate = (datetime(2021, 5, 5)-timedelta(days=1)).strftime("%Y-%m-%d")
 # Query today's data
 query = 'select nename,hardwaretype,serialnumber,description from alticedr_sitedb.networkinventory a where a.lastupdate >= \'{today}\' and not exists (select 1 from alticedr_sitedb.networkinventory b where b.lastupdate >= \'{yesterday}\' and b.lastupdate <  \'{today}\' and b.nename = a.nename and ifnull(b.serialnumber, \'x\') = ifnull(a.serialnumber, \'x\'))'.format(today=currentDate, yesterday=yesterdayDate)
 pointer.execute(query)
@@ -44,11 +46,11 @@ currentDataframe = pd.DataFrame(queryPayload, columns=['nename','hardwaretype','
 # Close DB Connection
 pointer.close()
 connectr.close()
-print(currentDataframe)
+#print(currentDataframe)
 cred = mailCredentials.credentials()
 mail_from = 'caportes@altice.com.do'
-mail_to = 'caportes@altice.com.do'
+mail_to = 'ran-operaciones@altice.com.do'
 mail_subject = '[RANventory Manager] Daily Hardware Report'
-mail_body = 'Test'
+mail_body = '<p>Good morning,</p><p>Here is a list of newly added or replaced hardware on the RAN for yesterday:</p>' + currentDataframe.to_html(index=False) + '<p>Regards, </p>'
 
-#sendMailNotification(cred, mail_from, mail_to, mail_subject, mail_body)
+sendMailNotification(cred, mail_from, mail_to, mail_subject, mail_body)
