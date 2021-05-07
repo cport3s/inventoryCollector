@@ -99,6 +99,10 @@ for fileName in btsFileList:
             # Manufacturer Data Column
             descList.append(data[i])
             i += 19
+        else:
+            k += 19
+            j += 19
+            i += 19
     # Board Section
     # Move index to desired position (depending on document section)
     k = keywordsDict['[Board]'] + 39
