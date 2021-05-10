@@ -89,7 +89,7 @@ for fileName in btsFileList:
     i = k + 12
     while i < keywordsDict['[Slot]']:
         # Check if serial number value is valid
-        if len(data[j]) > 5:
+        if len(data[j]) > 8:
             # Frame Type Column
             hwType.append(data[k])
             k += 19
