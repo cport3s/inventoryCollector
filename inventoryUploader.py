@@ -77,10 +77,16 @@ for fileName in btsFileList:
         hwType.append(data[k])
         k += 16
         # Serial Number Column
-        serialNumberList.append(data[j])
+        if len(data[j]) < 10:
+            serialNumberList.append('')
+        else:
+            serialNumberList.append(data[j])
         j += 16
         # Manufacturer Data Column
-        descList.append(data[i])
+        if len(data[i]) < 10:
+            descList.append('')
+        else:
+            descList.append(data[i])
         i += 16
     # Subrack Section
     # Move index to desired position (depending on document section)
