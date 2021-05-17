@@ -3,7 +3,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import mailCredentials
 import mysql.connector
-from datetime import datetime, timedelta
+from datetime import datetime,timedelta
 import numpy as np
 import pandas as pd
 import classes
