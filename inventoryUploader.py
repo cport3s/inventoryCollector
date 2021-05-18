@@ -68,26 +68,26 @@ for fileName in btsFileList:
     neNameEnd = data[0].find('[NEType]')
     neName = data[0][neNameStart+8:neNameEnd]
     # Move index to desired position (depending on document section)
-    k = keywordsDict['[Cabinet]'] + 18
-    j = k + 5
-    i = k + 10
-    # Cabinet Section
-    while i < keywordsDict['[Subrack]']:
-        # Rack Type Column
-        hwType.append(data[k])
-        k += 16
-        # Serial Number Column
-        if len(data[j]) < 10:
-            serialNumberList.append('')
-        else:
-            serialNumberList.append(data[j])
-        j += 16
-        # Manufacturer Data Column
-        if len(data[i]) < 10:
-            descList.append('')
-        else:
-            descList.append(data[i])
-        i += 16
+    #k = keywordsDict['[Cabinet]'] + 18
+    #j = k + 5
+    #i = k + 10
+    ## Cabinet Section
+    #while i < keywordsDict['[Subrack]']:
+    #    # Rack Type Column
+    #    hwType.append(data[k])
+    #    k += 16
+    #    # Serial Number Column
+    #    if len(data[j]) < 10:
+    #        serialNumberList.append(data[k])
+    #    else:
+    #        serialNumberList.append(data[j])
+    #    j += 16
+    #    # Manufacturer Data Column
+    #    if len(data[i]) < 10:
+    #        descList.append(data[k])
+    #    else:
+    #        descList.append(data[i])
+    #    i += 16
     # Subrack Section
     # Move index to desired position (depending on document section)
     k = keywordsDict['[Subrack]'] + 22
