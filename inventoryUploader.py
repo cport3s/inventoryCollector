@@ -96,7 +96,7 @@ for fileName in btsFileList:
     while i < keywordsDict['[Slot]']:
         # Check if serial number value is valid
         if len(data[j]) > 8:
-            # Frame Type Column
+            # Board Type Column
             hwType.append(data[k])
             k += 19
             # Serial Number Column
@@ -115,15 +115,21 @@ for fileName in btsFileList:
     j = k + 5
     i = k + 10
     while i < keywordsDict['[Port]']:
-        # Board Type Column
-        hwType.append(data[k])
-        k += 31
-        # Serial Number Column
-        serialNumberList.append(data[j])
-        j += 31
-        # Manufacturer Data Column
-        descList.append(data[i])
-        i += 31
+        # If the serial number cell has a whitespace in, then skip the row
+        if " " in data[j]:
+            k += 31
+            j += 31
+            i += 31
+        else:
+            # Board Type Column
+            hwType.append(data[k])
+            k += 31
+            # Serial Number Column
+            serialNumberList.append(data[j])
+            j += 31
+            # Manufacturer Data Column
+            descList.append(data[i])
+            i += 31
 
     for i in range(len(hwType)):
         query = 'INSERT INTO `alticedr_sitedb`.`networkinventory` (`nename`,`hardwaretype`,`serialnumber`,`description`) VALUES (\'{}\',\'{}\',\'{}\',\'{}\');'.format(neName, hwType[i], serialNumberList[i], descList[i])
