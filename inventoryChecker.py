@@ -19,9 +19,9 @@ def sendMailNotification(cred, mail_from, mail_to, mail_subject, mail_body):
     mimeMsg['To'] = mail_to
     mimeMsg['Subject'] = mail_subject
     mimeMsg.attach(MIMEText(mail_body, 'html'))
-    connection = smtplib.SMTP(host='smtp.office365.com', port=587)
+    connection = smtplib.SMTP(host='smtp.orange.com.do', port=25)
     connection.starttls()
-    connection.login(cred.username, cred.password)
+    #connection.login(cred.username, cred.password)
     connection.send_message(mimeMsg)
     connection.quit()
 
@@ -45,7 +45,7 @@ currentDataframe = pd.DataFrame(queryPayload, columns=['nename','hardwaretype','
 pointer.close()
 connectr.close()
 cred = mailCredentials.credentials()
-mail_from = 'caportes@altice.com.do'
+mail_from = 'sitedb@altice.com.do'
 mail_to = 'ran-operaciones@altice.com.do'
 mail_subject = '[RANventory Manager] Daily Hardware Report'
 mail_body = '<p>Good morning,</p><p>Here is a list of newly added or replaced hardware on the RAN for yesterday:</p>' + currentDataframe.to_html(index=False)
