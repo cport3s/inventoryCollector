@@ -44,6 +44,7 @@ for fileName in btsFileList:
     partNumbers = []
     serialNumberList = []
     descList = []
+    bomCode = []
     # Parse df columns as lists (all CSV data is stored as columns)
     data = list(dataframe.columns)
     # Find all keyword's position inside the array
@@ -114,12 +115,14 @@ for fileName in btsFileList:
     k = keywordsDict['[Board]'] + 39
     j = k + 5
     i = k + 10
+    l = k + 18
     while i < keywordsDict['[Port]']:
         # If the serial number cell has a whitespace in, then skip the row
         if " " in data[j]:
             k += 31
             j += 31
             i += 31
+            l += 31
         else:
             # Board Type Column
             hwType.append(data[k])
@@ -130,9 +133,11 @@ for fileName in btsFileList:
             # Manufacturer Data Column
             descList.append(data[i])
             i += 31
+            bomCode.append(data[l])
+            l += 31
 
     for i in range(len(hwType)):
-        query = 'INSERT INTO `alticedr_sitedb`.`networkinventory` (`nename`,`hardwaretype`,`serialnumber`,`description`) VALUES (\'{}\',\'{}\',\'{}\',\'{}\');'.format(neName, hwType[i], serialNumberList[i], descList[i])
+        query = 'INSERT INTO `alticedr_sitedb`.`networkinventory` (`nename`,`hardwaretype`,`serialnumber`,`description`,`partnumber`) VALUES (\'{}\',\'{}\',\'{}\',\'{}\',\'{}\');'.format(neName, hwType[i], serialNumberList[i], descList[i], bomCode[i])
         pointer.execute(query)
         connectr.commit()
 
