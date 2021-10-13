@@ -94,7 +94,8 @@ for fileName in btsFileList:
     k = keywordsDict['[Subrack]'] + 22
     j = k + 7
     i = k + 12
-    while i < keywordsDict['[Slot]']:
+    l = k + 13
+    while l < keywordsDict['[Slot]']:
         # Check if serial number value is valid
         if len(data[j]) > 8:
             # Board Type Column
@@ -106,17 +107,21 @@ for fileName in btsFileList:
             # Manufacturer Data Column
             descList.append(data[i])
             i += 19
+            # BOM Code Column
+            bomCode.append(data[l])
+            l += 19
         else:
             k += 19
             j += 19
             i += 19
+            l += 19
     # Board Section
     # Move index to desired position (depending on document section)
     k = keywordsDict['[Board]'] + 39
     j = k + 5
     i = k + 10
     l = k + 18
-    while i < keywordsDict['[Port]']:
+    while l < keywordsDict['[Port]']:
         # If the serial number cell has a whitespace in, then skip the row
         if " " in data[j]:
             k += 31
@@ -133,11 +138,13 @@ for fileName in btsFileList:
             # Manufacturer Data Column
             descList.append(data[i])
             i += 31
+            # BOM Code Column
             bomCode.append(data[l])
             l += 31
 
     for i in range(len(hwType)):
         query = 'INSERT INTO `alticedr_sitedb`.`networkinventory` (`nename`,`hardwaretype`,`serialnumber`,`description`,`partnumber`) VALUES (\'{}\',\'{}\',\'{}\',\'{}\',\'{}\');'.format(neName, hwType[i], serialNumberList[i], descList[i], bomCode[i])
+        #print(query)
         pointer.execute(query)
         connectr.commit()
 
