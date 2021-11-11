@@ -36,11 +36,11 @@ currentDate = (datetime.now()).strftime("%Y-%m-%d")
 # Get yesterday's date
 yesterdayDate = (datetime.now()-timedelta(days=1)).strftime("%Y-%m-%d")
 # Query today's data
-query = 'select nename,hardwaretype,serialnumber,description from alticedr_sitedb.networkinventory a where a.lastupdate >= \'{today}\' and not exists (select 1 from alticedr_sitedb.networkinventory b where b.lastupdate >= \'{yesterday}\' and b.lastupdate <  \'{today}\' and b.nename = a.nename and ifnull(b.serialnumber, \'x\') = ifnull(a.serialnumber, \'x\'))'.format(today=currentDate, yesterday=yesterdayDate)
+query = 'select nename,hardwaretype,serialnumber,description,partnumber from alticedr_sitedb.networkinventory a where a.lastupdate >= \'{today}\' and not exists (select 1 from alticedr_sitedb.networkinventory b where b.lastupdate >= \'{yesterday}\' and b.lastupdate <  \'{today}\' and b.nename = a.nename and ifnull(b.serialnumber, \'x\') = ifnull(a.serialnumber, \'x\'))'.format(today=currentDate, yesterday=yesterdayDate)
 pointer.execute(query)
 queryRaw = pointer.fetchall()
 queryPayload = np.array(queryRaw)
-currentDataframe = pd.DataFrame(queryPayload, columns=['nename','hardwaretype','serialnumber','description'])
+currentDataframe = pd.DataFrame(queryPayload, columns=['nename','hardwaretype','serialnumber','description','partnumber'])
 # Close DB Connection
 pointer.close()
 connectr.close()
